@@ -1,100 +1,159 @@
 import React, { useState } from 'react';
-const Item = () => {
-    const riddles = [
-        {
-            id: 1,
-            description: "Самая высокая гора называется ….",
-            option1: "Эверест",
-            option2: "Гималаи",
-            option3: "Арарат",
-            option4: "Чогори",
-            correct: 1
-        },
-        {
-            id: 2,
-            description: "Чем является арбуз?",
-            option1: "Фруктом",
-            option2: "Овощем",
-            option3: "Ягодой",
-            option4: "Tidehunter",
-            correct: 3,
-        },
-        {
-            id: 3,
-            description: "Какую максимальную скорость может развивать гепард?",
-            option1: "60 км/ч",
-            option2: "70 км/ч",
-            option3: "80 км/ч",
-            option4: "более 90 км/ч",
-            correct: 4,
-        },
-        {
-            id: 4,
-            description: "Сколько месяцев в году имеют 28 дней?",
-            option1: "1",
-            option2: "12",
-            option3: "6",
-            option4: "7",
-            correct: 2,
-        },
-        {
-            id: 5,
-            description: "Какая птица носит название каши?",
-            option1: "Овсянка",
-            option2: "Гречка",
-            option3: "Пшенка",
-            option4: "Перловка",
-            correct: 1,
-        }
-    ];
-    const [userAnswers, setUserAnswers] = useState({});
-    const handleAnswerSelection = (riddleId, answer) => {
-        setUserAnswers((prevAnswers) => ({
-            ...prevAnswers,
-            [riddleId]: answer,
-        }));
-    };
-    return (
+
+function Item() {
+  const [questions, setQuestions] = useState([]);
+  const [text, setText] = useState('');
+  const [options, setOptions] = useState(['', '', '', '']);
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [userAnswers, setUserAnswers] = useState([]);
+
+  const handleOptionChange = (index, value) => {
+    const newOptions = [...options];
+    newOptions[index] = value;
+    setOptions(newOptions);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addQuestion({ text, options, correctAnswer });
+    setText('');
+    setOptions(['', '', '', '']);
+    setCorrectAnswer('');
+  };
+
+  const handleAnswerSubmit = (index, selectedOption) => {
+    setUserAnswers([...userAnswers, { questionIndex: index, selectedOption }]);
+  };
+
+  const addQuestion = (newQuestion) => {
+    setQuestions([...questions, newQuestion]);
+  };
+
+  return (
+    <div className="App">
+      <form onSubmit={handleSubmit}>
+        <h1>Добавить новый вопрос</h1>
         <div>
-            {riddles.map((riddle) => {
-                const userAnswer = userAnswers[riddle.id];
-                const isCorrect = userAnswer === riddle.correct;
-                const feedback = isCorrect ? 'Правильный ответ!' : 'Вы ответили неправильно.';
-                return (
-                    <div key={riddle.id} className="riddle-box">
-                        <h3 className="riddle-description">{riddle.description} </h3>
-                        <ol className="answer-options" style={{ listStyleType: 'none', padding: 0 }}>
-                            <li>
-                                <button className="answer-button"
-                                    onClick={() => handleAnswerSelection(riddle.id, 1)}>
-                                    {riddle.option1}
-                                </button>
-                            </li>
-                            <li>
-                                <button className="answer-button"
-                                    onClick={() => handleAnswerSelection(riddle.id, 2)}>
-                                    {riddle.option2}
-                                </button>
-                            </li>
-                            <li>
-                                <button className="answer-button"
-                                    onClick={() => handleAnswerSelection(riddle.id, 3)}>
-                                    {riddle.option3}
-                                </button>
-                            </li>
-                            <li>
-                                <button className="answer-button"
-                                    onClick={() => handleAnswerSelection(riddle.id, 4)}>
-                                    {riddle.option4}
-                                </button>
-                            </li>
-                        </ol>
-                        {userAnswer && <p className="feedback">{feedback}</p>}
-                    </div>
-                );
-            })}
+          <label>
+            Вопрос:
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </label>
         </div>
-    );
+        <div>
+          <label>
+            Ответ:
+            <input
+              type="text"
+              value={options[0]}
+              onChange={(e) => handleOptionChange(0, e.target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Ответ 2:
+            <input
+              type="text"
+              value={options[1]}
+              onChange={(e) => handleOptionChange(1, e.target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Ответ 3:
+            <input
+              type="text"
+              value={options[2]}
+              onChange={(e) => handleOptionChange(2, e.target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Ответ 4:
+            <input
+              type="text"
+              value={options[3]}
+              onChange={(e) => handleOptionChange(3, e.target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Правильный ответ:
+            <input
+              type="text"
+              value={correctAnswer}
+              onChange={(e) => setCorrectAnswer(e.target.value)}
+            />
+          </label>
+        </div>
+        <button type="submit">Добавить вопрос</button>
+      </form>
+      <div>
+        <h2>Список вопросов</h2>
+        {questions.length === 0 ? (
+          <p>Вопрос пока нет.</p>
+        ) : (
+          <ul>
+            {questions.map((question, index) => (
+              <li key={index}>
+                <h3>{question.text}</h3>
+                <ul>
+                  {question.options.map((option, idx) => (
+                    <li
+                      key={idx}
+                      style={{
+                        color:
+                          userAnswers.find(
+                            (answer) =>
+                              answer.questionIndex === index &&
+                              answer.selectedOption === option
+                          ) &&
+                          option === question.correctAnswer
+                            ? 'green'
+                            : userAnswers.find(
+                                (answer) =>
+                                  answer.questionIndex === index &&
+                                  answer.selectedOption === option
+                              )
+                            ? 'red'
+                            : 'black'
+                      }}
+                    >
+                      {option}
+                      {!userAnswers.find(
+                        (answer) =>
+                          answer.questionIndex === index &&
+                          answer.selectedOption === option
+                      ) && (
+                        <button
+                          onClick={() => handleAnswerSubmit(index, option)}
+                        >
+                          Answer
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                {userAnswers.find((answer) => answer.questionIndex === index) && (
+                  <p>
+                    <strong>Правильный ответ: </strong>
+                    {question.correctAnswer}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default Item;
