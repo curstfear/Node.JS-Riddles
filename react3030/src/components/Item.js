@@ -3,7 +3,7 @@ const Item = () => {
     const riddles = [
         {
             id: 1,
-            description: "Самая высокая гора называется …",
+            description: "Самая высокая гора называется ….",
             option1: "Эверест",
             option2: "Гималаи",
             option3: "Арарат",
